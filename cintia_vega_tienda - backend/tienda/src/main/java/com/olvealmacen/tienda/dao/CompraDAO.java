@@ -9,12 +9,13 @@ import java.util.List;
 
 public class CompraDAO {
 
-    Connection con;
+    private Connection con;
 
     public CompraDAO() {
-        con = ConexionDB.conectar();
+        con = ConexionDB.getConnection();
     }
 
+    // Listar todas las compras
     public List<Compra> listar() {
         List<Compra> lista = new ArrayList<>();
         String sql = "SELECT * FROM compras";
@@ -32,13 +33,41 @@ public class CompraDAO {
                 );
                 lista.add(c);
             }
-        } catch (Exception e) {
+
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return lista;
     }
 
+    // Obtener compra por ID
+    public Compra obtenerPorId(int id) {
+        String sql = "SELECT * FROM compras WHERE id=?";
+        Compra compra = null;
+
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                compra = new Compra(
+                        rs.getInt("id"),
+                        rs.getString("fecha"),
+                        rs.getInt("idProveedor"),
+                        rs.getDouble("total")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return compra;
+    }
+
+    // Agregar una compra
     public boolean agregar(Compra c) {
         String sql = "INSERT INTO compras (fecha, idProveedor, total) VALUES (?,?,?)";
 
@@ -50,12 +79,13 @@ public class CompraDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
 
+    // Actualizar una compra
     public boolean actualizar(Compra c) {
         String sql = "UPDATE compras SET fecha=?, idProveedor=?, total=? WHERE id=?";
 
@@ -68,12 +98,13 @@ public class CompraDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
 
+    // Eliminar una compra
     public boolean eliminar(int id) {
         String sql = "DELETE FROM compras WHERE id=?";
 
@@ -83,7 +114,7 @@ public class CompraDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }

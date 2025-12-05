@@ -12,14 +12,14 @@ import java.io.IOException;
 @WebServlet("/api/ventas")
 public class VentaController extends HttpServlet {
 
-    private VentaService service = new VentaService();
-    private Gson gson = new Gson();
+    private final VentaService service = new VentaService();
+    private final Gson gson = new Gson();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        resp.setContentType("application/json");
+        resp.setContentType("application/json; charset=UTF-8");
         resp.getWriter().write(gson.toJson(service.listar()));
     }
 
@@ -27,10 +27,10 @@ public class VentaController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Venta v = gson.fromJson(req.getReader(), Venta.class);
-        boolean ok = service.agregar(v);
+        Venta venta = gson.fromJson(req.getReader(), Venta.class);
+        boolean ok = service.agregar(venta);
 
-        resp.setContentType("application/json");
+        resp.setContentType("application/json; charset=UTF-8");
         resp.getWriter().write("{\"success\": " + ok + "}");
     }
 
@@ -38,10 +38,10 @@ public class VentaController extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Venta v = gson.fromJson(req.getReader(), Venta.class);
-        boolean ok = service.actualizar(v);
+        Venta venta = gson.fromJson(req.getReader(), Venta.class);
+        boolean ok = service.actualizar(venta);
 
-        resp.setContentType("application/json");
+        resp.setContentType("application/json; charset=UTF-8");
         resp.getWriter().write("{\"success\": " + ok + "}");
     }
 
@@ -52,7 +52,7 @@ public class VentaController extends HttpServlet {
         int id = Integer.parseInt(req.getParameter("id"));
         boolean ok = service.eliminar(id);
 
-        resp.setContentType("application/json");
+        resp.setContentType("application/json; charset=UTF-8");
         resp.getWriter().write("{\"success\": " + ok + "}");
     }
 }

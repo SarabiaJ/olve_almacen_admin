@@ -9,32 +9,95 @@ import java.util.List;
 
 public class CategoriaDAO {
 
-    ConexionDB cn = new ConexionDB();
-    Connection con;
-    PreparedStatement ps;
-    ResultSet rs;
-
-    // LISTAR TODO
-    public List<Categoria> listar() {
+    // Obtener todas las categorías
+    public List<Categoria> obtenerCategorias() {
         List<Categoria> lista = new ArrayList<>();
-        String sql = "SELECT * FROM categorias";
 
-        try {
-            con = cn.conectar();
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement stmt = con.prepareStatement("SELECT * FROM categoria");
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                Categoria c = new Categoria();
-                c.setIdCategoria(rs.getInt("idCategoria"));
-                c.setNombreCategoria(rs.getString("nombreCategoria"));
+                Categoria c = new Categoria(
+                        rs.getInt("id"),
+                        rs.getString("nombre")
+                );
                 lista.add(c);
             }
-
         } catch (Exception e) {
-            System.out.println("ERROR LISTAR: " + e.getMessage());
+            e.printStackTrace();
         }
 
         return lista;
+    }
+
+    // Obtener una sola categoría
+    public Categoria obtenerCategoriaPorId(int id) {
+        Categoria c = null;
+
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement stmt = con.prepareStatement("SELECT * FROM categoria WHERE id=?")) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                c = new Categoria(
+                        rs.getInt("id"),
+                        rs.getString("nombre")
+                );
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return c;
+    }
+
+    // Crear categoría
+    public boolean agregarCategoria(Categoria categoria) {
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement stmt = con.prepareStatement("INSERT INTO categoria (id, nombre) VALUES (?, ?)")) {
+
+            stmt.setInt(1, categoria.getIdCategoria());
+            stmt.setString(2, categoria.getNombreCategoria());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Actualizar categoría
+    public boolean actualizarCategoria(Categoria categoria) {
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement stmt = con.prepareStatement("UPDATE categoria SET nombre=? WHERE id=?")) {
+
+            stmt.setString(1, categoria.getNombreCategoria());
+            stmt.setInt(2, categoria.getIdCategoria());
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Eliminar categoría
+    public boolean eliminarCategoria(int id) {
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement stmt = con.prepareStatement("DELETE FROM categoria WHERE id=?")) {
+
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
