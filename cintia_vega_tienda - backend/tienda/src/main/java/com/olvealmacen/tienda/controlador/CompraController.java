@@ -20,7 +20,7 @@ public class CompraController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        List<Compra> lista = service.listar();
+        List<Compra> lista = service.obtenerCompras();
         resp.setContentType("application/json");
         resp.getWriter().write(gson.toJson(lista));
     }
@@ -30,7 +30,7 @@ public class CompraController extends HttpServlet {
         BufferedReader reader = req.getReader();
         Compra c = gson.fromJson(reader, Compra.class);
 
-        boolean ok = service.agregar(c);
+        boolean ok = service.agregarCompra(c);
 
         resp.setContentType("application/json");
         resp.getWriter().write("{\"success\": " + ok + "}");
@@ -41,7 +41,7 @@ public class CompraController extends HttpServlet {
         BufferedReader reader = req.getReader();
         Compra c = gson.fromJson(reader, Compra.class);
 
-        boolean ok = service.actualizar(c);
+        boolean ok = service.actualizarCompra(c);
 
         resp.setContentType("application/json");
         resp.getWriter().write("{\"success\": " + ok + "}");
@@ -50,7 +50,7 @@ public class CompraController extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         int id = Integer.parseInt(req.getParameter("id"));
-        boolean ok = service.eliminar(id);
+        boolean ok = service.eliminarCompra(id);
 
         resp.setContentType("application/json");
         resp.getWriter().write("{\"success\": " + ok + "}");

@@ -91,4 +91,32 @@ public class VentaDAO {
         }
         return false;
     }
+
+    public Venta obtenerPorId(int id) {
+        String sql = "SELECT * FROM ventas WHERE id=?";
+        Venta venta = null;
+
+        try (Connection con = ConexionDB.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                venta = new Venta(
+                    rs.getInt("id"),
+                    rs.getString("fecha"),
+                    rs.getInt("idCliente"),
+                    rs.getString("nombreCliente"),
+                    rs.getString("metodoPago"),
+                    rs.getDouble("total")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return venta;
+    }
+
 }

@@ -23,7 +23,7 @@ public class CategoriaControlador extends HttpServlet {
 
         switch (accion) {
             case "listar":
-                List<Categoria> lista = dao.listar();
+                List<Categoria> lista = dao.obtenerCategorias();
                 String json = gson.toJson(lista);
 
                 response.setContentType("application/json");
