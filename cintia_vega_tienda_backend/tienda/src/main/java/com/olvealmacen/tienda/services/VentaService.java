@@ -1,5 +1,6 @@
 package com.olvealmacen.tienda.services;
 
+import com.olvealmacen.tienda.dao.CategoriaDAO;
 import com.olvealmacen.tienda.dao.VentaDAO;
 import com.olvealmacen.tienda.modelo.Venta;
 
@@ -7,7 +8,11 @@ import java.util.List;
 
 public class VentaService {
 
-    private VentaDAO ventaDAO = new VentaDAO();
+    private final VentaDAO ventaDAO;
+
+    public VentaService(VentaDAO ventaDAO) {
+        this.ventaDAO = ventaDAO;
+    }
 
     // Obtener todas las ventas
     public List<Venta> obtenerVentas() {

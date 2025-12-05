@@ -7,10 +7,10 @@ import java.util.List;
 
 public class CategoriaService {
 
-    private CategoriaDAO categoriaDAO;
+    private final CategoriaDAO categoriaDAO;
 
-    public CategoriaService() {
-        categoriaDAO = new CategoriaDAO();
+    public CategoriaService(CategoriaDAO categoriaDAO) {
+        this.categoriaDAO = categoriaDAO;
     }
 
     // Obtener todas las categorías

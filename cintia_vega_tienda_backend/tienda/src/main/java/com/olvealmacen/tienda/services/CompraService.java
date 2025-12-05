@@ -1,12 +1,17 @@
 package com.olvealmacen.tienda.services;
 
+import com.olvealmacen.tienda.dao.CategoriaDAO;
 import com.olvealmacen.tienda.dao.CompraDAO;
 import com.olvealmacen.tienda.modelo.Compra;
 import java.util.List;
 
 public class CompraService {
 
-    private CompraDAO compraDAO = new CompraDAO();
+    private final CompraDAO compraDAO;
+
+    public CompraService(CompraDAO compraDAO) {
+        this.compraDAO = compraDAO;
+    }
 
     public List<Compra> obtenerCompras() {
         return compraDAO.listar();

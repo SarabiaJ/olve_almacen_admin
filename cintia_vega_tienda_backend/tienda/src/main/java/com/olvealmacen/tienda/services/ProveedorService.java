@@ -1,5 +1,6 @@
 package com.olvealmacen.tienda.services;
 
+import com.olvealmacen.tienda.dao.CategoriaDAO;
 import com.olvealmacen.tienda.dao.ProveedorDAO;
 import com.olvealmacen.tienda.modelo.Proveedor;
 
@@ -7,21 +8,25 @@ import java.util.List;
 
 public class ProveedorService {
 
-    private ProveedorDAO dao = new ProveedorDAO();
+    private final ProveedorDAO proveedorDAO;
+
+    public ProveedorService(ProveedorDAO proveedorDAO) {
+        this.proveedorDAO = proveedorDAO;
+    }
 
     public List<Proveedor> listar() {
-        return dao.listar();
+        return proveedorDAO.listar();
     }
 
     public boolean agregar(Proveedor p) {
-        return dao.agregar(p);
+        return proveedorDAO.agregar(p);
     }
 
     public boolean actualizar(Proveedor p) {
-        return dao.actualizar(p);
+        return proveedorDAO.actualizar(p);
     }
 
     public boolean eliminar(int id) {
-        return dao.eliminar(id);
+        return proveedorDAO.eliminar(id);
     }
 }
