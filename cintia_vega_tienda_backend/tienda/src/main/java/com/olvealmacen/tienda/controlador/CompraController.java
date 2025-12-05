@@ -4,55 +4,45 @@ import com.google.gson.Gson;
 import com.olvealmacen.tienda.modelo.Compra;
 import com.olvealmacen.tienda.services.CompraService;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/api/compras")
-public class CompraController extends HttpServlet {
+@RestController
+@RequestMapping("/api/compras")
+public class CompraController {
 
-    private CompraService service = new CompraService();
-    private Gson gson = new Gson();
+    private final CompraService service;
+    private final Gson gson;
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public CompraController(CompraService service) {
+        this.service = service;
+        this.gson = new Gson();
+    }
+
+    @GetMapping
+    public String listar() {
         List<Compra> lista = service.obtenerCompras();
-        resp.setContentType("application/json");
-        resp.getWriter().write(gson.toJson(lista));
+        return gson.toJson(lista);
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        BufferedReader reader = req.getReader();
-        Compra c = gson.fromJson(reader, Compra.class);
-
+    @PostMapping
+    public String agregar(@RequestBody String body) {
+        Compra c = gson.fromJson(body, Compra.class);
         boolean ok = service.agregarCompra(c);
-
-        resp.setContentType("application/json");
-        resp.getWriter().write("{\"success\": " + ok + "}");
+        return "{\"success\": " + ok + "}";
     }
 
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        BufferedReader reader = req.getReader();
-        Compra c = gson.fromJson(reader, Compra.class);
-
+    @PutMapping
+    public String actualizar(@RequestBody String body) {
+        Compra c = gson.fromJson(body, Compra.class);
         boolean ok = service.actualizarCompra(c);
-
-        resp.setContentType("application/json");
-        resp.getWriter().write("{\"success\": " + ok + "}");
+        return "{\"success\": " + ok + "}";
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        int id = Integer.parseInt(req.getParameter("id"));
+    @DeleteMapping("/{id}")
+    public String eliminar(@PathVariable int id) {
         boolean ok = service.eliminarCompra(id);
-
-        resp.setContentType("application/json");
-        resp.getWriter().write("{\"success\": " + ok + "}");
+        return "{\"success\": " + ok + "}";
     }
 }

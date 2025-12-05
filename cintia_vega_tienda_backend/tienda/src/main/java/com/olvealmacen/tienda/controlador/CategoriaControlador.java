@@ -1,38 +1,28 @@
 package com.olvealmacen.tienda.controlador;
 
-import com.olvealmacen.tienda.dao.CategoriaDAO;
+import com.olvealmacen.tienda.services.CategoriaService;
 import com.olvealmacen.tienda.modelo.Categoria;
 import com.google.gson.Gson;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "CategoriaControlador", value = "/CategoriaControlador")
-public class CategoriaControlador extends HttpServlet {
+@RestController
+@RequestMapping("/categoria")
+public class CategoriaControlador {
 
-    CategoriaDAO dao = new CategoriaDAO();
-    Gson gson = new Gson();
+    private final CategoriaService categoriaService;
+    private final Gson gson;
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String accion = request.getParameter("accion");
+    public CategoriaControlador(CategoriaService categoriaService) {
+        this.categoriaService = categoriaService;
+        this.gson = new Gson();
+    }
 
-        switch (accion) {
-            case "listar":
-                List<Categoria> lista = dao.obtenerCategorias();
-                String json = gson.toJson(lista);
-
-                response.setContentType("application/json");
-                response.getWriter().write(json);
-                break;
-
-            default:
-                response.getWriter().write("{\"error\":\"Acción no válida\"}");
-                break;
-        }
+    @GetMapping("/listar")
+    public String listarCategorias() {
+        List<Categoria> lista = categoriaService.obtenerCategorias();
+        return gson.toJson(lista);
     }
 }

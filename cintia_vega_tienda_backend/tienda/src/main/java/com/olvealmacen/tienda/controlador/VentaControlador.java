@@ -1,75 +1,48 @@
 package com.olvealmacen.tienda.controlador;
 
+import com.google.gson.Gson;
 import com.olvealmacen.tienda.modelo.Venta;
 import com.olvealmacen.tienda.services.VentaService;
-import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+@RestController
+@RequestMapping("/ventas")
+public class VentaControlador {
 
-@WebServlet("/ventas")
-public class VentaControlador extends HttpServlet {
+    private final VentaService ventaService;
+    private final Gson gson;
 
-    private VentaService ventaService = new VentaService();
-    private Gson gson = new Gson();
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-
-        List<Venta> listaVentas = ventaService.obtenerVentas();
-        String json = gson.toJson(listaVentas);
-
-        out.print(json);
-        out.flush();
+    public VentaControlador(VentaService ventaService) {
+        this.ventaService = ventaService;
+        this.gson = new Gson();
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-
-        // Suponiendo que recibes un JSON con la venta
-        Venta venta = gson.fromJson(request.getReader(), Venta.class);
-        boolean resultado = ventaService.agregarVenta(venta);
-
-        out.print("{\"success\":" + resultado + "}");
-        out.flush();
+    @GetMapping
+    public String listar() {
+        List<Venta> lista = ventaService.obtenerVentas();
+        return gson.toJson(lista);
     }
 
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-
-        Venta venta = gson.fromJson(request.getReader(), Venta.class);
-        boolean resultado = ventaService.actualizarVenta(venta);
-
-        out.print("{\"success\":" + resultado + "}");
-        out.flush();
+    @PostMapping
+    public String agregar(@RequestBody String body) {
+        Venta v = gson.fromJson(body, Venta.class);
+        boolean ok = ventaService.agregarVenta(v);
+        return "{\"success\": " + ok + "}";
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
+    @PutMapping
+    public String actualizar(@RequestBody String body) {
+        Venta v = gson.fromJson(body, Venta.class);
+        boolean ok = ventaService.actualizarVenta(v);
+        return "{\"success\": " + ok + "}";
+    }
 
-        int id = Integer.parseInt(request.getParameter("id"));
-        boolean resultado = ventaService.eliminarVenta(id);
-
-        out.print("{\"success\":" + resultado + "}");
-        out.flush();
+    @DeleteMapping("/{id}")
+    public String eliminar(@PathVariable int id) {
+        boolean ok = ventaService.eliminarVenta(id);
+        return "{\"success\": " + ok + "}";
     }
 }

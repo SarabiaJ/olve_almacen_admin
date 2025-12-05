@@ -4,71 +4,40 @@ import com.google.gson.Gson;
 import com.olvealmacen.tienda.modelo.Producto;
 import com.olvealmacen.tienda.services.ProductoService;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+@RestController
+@RequestMapping("/productos")
+public class ProductoController {
 
-@WebServlet("/productos")
-public class ProductoController extends HttpServlet {
+    private final ProductoService service;
+    private final Gson gson;
 
-    private ProductoService service = new ProductoService();
-    private Gson gson = new Gson();
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        response.setContentType("application/json; charset=UTF-8");
-        String json = gson.toJson(service.obtenerTodos());
-
-        response.getWriter().write(json);
+    public ProductoController(ProductoService service) {
+        this.service = service;
+        this.gson = new Gson();
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @GetMapping
+    public String listar() {
+        return gson.toJson(service.obtenerTodos());
+    }
 
-        Producto p = new Producto();
-
-        p.setNombre(request.getParameter("nombre"));
-        p.setDescripcion(request.getParameter("descripcion"));
-        p.setImagen(request.getParameter("imagen"));
-        p.setPrecio(Double.parseDouble(request.getParameter("precio")));
-        p.setStock(Integer.parseInt(request.getParameter("stock")));
-        p.setIdCategoria(Integer.parseInt(request.getParameter("idCategoria")));
-
+    @PostMapping
+    public String insertar(@RequestBody Producto p) {
         boolean ok = service.insertar(p);
-        response.getWriter().write("{\"success\": " + ok + "}");
+        return "{\"success\": " + ok + "}";
     }
 
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        Producto p = new Producto();
-
-        p.setId(Integer.parseInt(request.getParameter("id")));
-        p.setNombre(request.getParameter("nombre"));
-        p.setDescripcion(request.getParameter("descripcion"));
-        p.setImagen(request.getParameter("imagen"));
-        p.setPrecio(Double.parseDouble(request.getParameter("precio")));
-        p.setStock(Integer.parseInt(request.getParameter("stock")));
-        p.setIdCategoria(Integer.parseInt(request.getParameter("idCategoria")));
-
+    @PutMapping
+    public String actualizar(@RequestBody Producto p) {
         boolean ok = service.actualizar(p);
-        response.getWriter().write("{\"success\": " + ok + "}");
+        return "{\"success\": " + ok + "}";
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        int id = Integer.parseInt(request.getParameter("id"));
-
+    @DeleteMapping("/{id}")
+    public String eliminar(@PathVariable int id) {
         boolean ok = service.eliminar(id);
-        response.getWriter().write("{\"success\": " + ok + "}");
+        return "{\"success\": " + ok + "}";
     }
 }
-

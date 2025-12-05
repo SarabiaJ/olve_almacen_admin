@@ -4,43 +4,42 @@ import com.google.gson.Gson;
 import com.olvealmacen.tienda.modelo.Proveedor;
 import com.olvealmacen.tienda.services.ProveedorService;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+@RestController
+@RequestMapping("/api/proveedores")
+public class ProveedorController {
 
-@WebServlet("/api/proveedores")
-public class ProveedorController extends HttpServlet {
+    private final ProveedorService service;
+    private final Gson gson;
 
-    private ProveedorService service = new ProveedorService();
-    private Gson gson = new Gson();
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setContentType("application/json");
-        String json = gson.toJson(service.listar());
-        resp.getWriter().write(json);
+    public ProveedorController(ProveedorService service) {
+        this.service = service;
+        this.gson = new Gson();
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        Proveedor p = gson.fromJson(req.getReader(), Proveedor.class);
+    @GetMapping
+    public String listar() {
+        return gson.toJson(service.listar());
+    }
+
+    @PostMapping
+    public String agregar(@RequestBody String body) {
+        Proveedor p = gson.fromJson(body, Proveedor.class);
         boolean ok = service.agregar(p);
-        resp.getWriter().write("{\"success\":" + ok + "}");
+        return "{\"success\": " + ok + "}";
     }
 
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        Proveedor p = gson.fromJson(req.getReader(), Proveedor.class);
+    @PutMapping
+    public String actualizar(@RequestBody String body) {
+        Proveedor p = gson.fromJson(body, Proveedor.class);
         boolean ok = service.actualizar(p);
-        resp.getWriter().write("{\"success\":" + ok + "}");
+        return "{\"success\": " + ok + "}";
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        int id = Integer.parseInt(req.getParameter("id"));
+    @DeleteMapping("/{id}")
+    public String eliminar(@PathVariable int id) {
         boolean ok = service.eliminar(id);
-        resp.getWriter().write("{\"success\":" + ok + "}");
+        return "{\"success\": " + ok + "}";
     }
 }
