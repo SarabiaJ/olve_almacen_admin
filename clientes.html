@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Clientes</title>
+
+    <!-- ESTILOS GLOBALES -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+
+<body style="background-color: #3D4A4B; color: white;">
+
+    <header class="text-center py-4">
+        <h1 style="color: #e7c158;">Administración de Clientes</h1>
+        <a href="index.html" class="btn btn-warning mt-2"><i class="bi bi-arrow-left-circle"></i> Volver al Panel</a>
+    </header>
+
+    <main class="container mt-4">
+
+        <!-- BOTÓN AÑADIR CLIENTE -->
+        <div class="text-end mb-3">
+            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+                <i class="bi bi-plus"></i> Añadir Cliente
+            </button>
+        </div>
+
+        <!-- TABLA DE CLIENTES -->
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-bordered align-middle text-center">
+                <thead style="background-color: #2b2b2b; color: #e7c158;">
+                    <tr>
+                        <th>ID Cliente</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Dirección</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaClientes">
+
+                    <!-- EJEMPLO TEMPORAL -->
+                    <tr>
+                        <td>5001</td>
+                        <td>María Fernanda</td>
+                        <td>3114567890</td>
+                        <td>maria@gmail.com</td>
+                        <td>Calle 10 #20-30</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="abrirModalEditarCliente()">Editar</button>
+                            <button class="btn btn-danger btn-sm">Eliminar</button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <!-- =============== MODAL AGREGAR CLIENTE =============== -->
+    <div class="modal fade" id="modalAgregar" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color:#3D4A4B; color:white;">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color:#e7c158;">Añadir Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-4">
+                            <label>ID Cliente:</label>
+                            <input type="text" class="form-control">
+                        </div>
+
+                        <div class="col-md-8">
+                            <label>Nombre Completo:</label>
+                            <input type="text" class="form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Teléfono:</label>
+                            <input type="text" class="form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Correo Electrónico:</label>
+                            <input type="email" class="form-control">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label>Dirección:</label>
+                            <input type="text" class="form-control">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-success">Guardar</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- =============== MODAL EDITAR CLIENTE =============== -->
+    <div class="modal fade" id="modalEditar" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color:#3D4A4B; color:white;">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color:#e7c158;">Editar Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-4">
+                            <label>ID Cliente (No editable):</label>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label>Nombre Completo:</label>
+                            <input type="text" class="form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Teléfono:</label>
+                            <input type="text" class="form-control">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Correo Electrónico:</label>
+                            <input type="email" class="form-control">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label>Dirección:</label>
+                            <input type="text" class="form-control">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-warning">Actualizar</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- FUNCIONES JS -->
+    <script>
+        function abrirModalEditarCliente() {
+            let modal = new bootstrap.Modal(document.getElementById("modalEditar"));
+            modal.show();
+        }
+    </script>
+
+</body>
+</html>

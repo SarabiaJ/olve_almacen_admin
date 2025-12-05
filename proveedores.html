@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Proveedores</title>
+
+    <!-- ESTILOS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.min.css">
+</head>
+
+<body style="background-color: #3D4A4B; color: white;">
+
+    <header class="text-center py-4">
+        <h1 style="color: #e7c158;">Administración de Proveedores</h1>
+        <a href="index.html" class="btn btn-warning mt-2">
+            <i class="bi bi-arrow-left-circle"></i> Volver al Panel
+        </a>
+    </header>
+
+    <main class="container mt-4">
+
+        <!-- BOTÓN AÑADIR -->
+        <div class="text-end mb-3">
+            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+                <i class="bi bi-plus"></i> Añadir Proveedor
+            </button>
+        </div>
+
+        <!-- TABLA -->
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-bordered align-middle text-center">
+                <thead style="background-color: #2b2b2b; color: #e7c158;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Ciudad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaProveedores">
+                    <!-- Se carga con JS -->
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <!-- ================= MODAL AGREGAR ================= -->
+    <div class="modal fade" id="modalAgregar">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color:#3D4A4B; color:white;">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color:#e7c158;">Añadir Proveedor</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label>Nombre:</label>
+                        <input id="add-nombre" type="text" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Teléfono:</label>
+                        <input id="add-telefono" type="text" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Correo:</label>
+                        <input id="add-correo" type="email" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Ciudad:</label>
+                        <input id="add-ciudad" type="text" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-success" onclick="guardarProveedor()">Guardar</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL EDITAR ================= -->
+    <div class="modal fade" id="modalEditar">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color:#3D4A4B; color:white;">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color:#e7c158;">Editar Proveedor</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <input id="edit-id" type="hidden">
+
+                    <div class="mb-3">
+                        <label>Nombre:</label>
+                        <input id="edit-nombre" type="text" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Teléfono:</label>
+                        <input id="edit-telefono" type="text" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Correo:</label>
+                        <input id="edit-correo" type="email" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Ciudad:</label>
+                        <input id="edit-ciudad" type="text" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-warning" onclick="actualizarProveedor()">Actualizar</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ===================== CRUD JS ===================== -->
+    <script>
+        const API = "http://localhost:8080/api/proveedores";  // Cambiar luego
+
+        // ====================================================
+        // Cargar proveedores
+        // ====================================================
+        async function cargarProveedores() {
+            const res = await fetch(API);
+            const data = await res.json();
+
+            const tabla = document.getElementById("tablaProveedores");
+            tabla.innerHTML = "";
+
+            data.forEach(p => {
+                tabla.innerHTML += `
+                    <tr>
+                        <td>${p.id}</td>
+                        <td>${p.nombre}</td>
+                        <td>${p.telefono}</td>
+                        <td>${p.correo}</td>
+                        <td>${p.ciudad}</td>
+
+                        <td>
+                            <button class="btn btn-warning btn-sm"
+                                onclick="abrirEditar(${p.id}, '${p.nombre}', '${p.telefono}', '${p.correo}', '${p.ciudad}')">
+                                Editar
+                            </button>
+
+                            <button class="btn btn-danger btn-sm" onclick="eliminarProveedor(${p.id})">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // ====================================================
+        // Abrir Modal Editar
+        // ====================================================
+        function abrirEditar(id, nombre, telefono, correo, ciudad) {
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-nombre").value = nombre;
+            document.getElementById("edit-telefono").value = telefono;
+            document.getElementById("edit-correo").value = correo;
+            document.getElementById("edit-ciudad").value = ciudad;
+
+            new bootstrap.Modal(document.getElementById("modalEditar")).show();
+        }
+
+        // ====================================================
+        // Guardar Proveedor
+        // ====================================================
+        async function guardarProveedor() {
+            const proveedor = {
+                nombre: document.getElementById("add-nombre").value,
+                telefono: document.getElementById("add-telefono").value,
+                correo: document.getElementById("add-correo").value,
+                ciudad: document.getElementById("add-ciudad").value
+            };
+
+            await fetch(API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(proveedor)
+            });
+
+            cargarProveedores();
+        }
+
+        // ====================================================
+        // Actualizar Proveedor
+        // ====================================================
+        async function actualizarProveedor() {
+            const proveedor = {
+                id: document.getElementById("edit-id").value,
+                nombre: document.getElementById("edit-nombre").value,
+                telefono: document.getElementById("edit-telefono").value,
+                correo: document.getElementById("edit-correo").value,
+                ciudad: document.getElementById("edit-ciudad").value
+            };
+
+            await fetch(API + "/" + proveedor.id, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(proveedor)
+            });
+
+            cargarProveedores();
+        }
+
+        // ====================================================
+        // Eliminar Proveedor
+        // ====================================================
+        async function eliminarProveedor(id) {
+            await fetch(API + "/" + id, { method: "DELETE" });
+            cargarProveedores();
+        }
+
+        // Cargar tabla al iniciar
+        cargarProveedores();
+    </script>
+
+</body>
+</html>

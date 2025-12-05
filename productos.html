@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Administración de Productos</title>
+
+    <!-- estilos globales (tu paleta / tipografía) -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- bootstrap (tabla y modales) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body style="background-color: #3D4A4B; color: white;">
+
+    <header class="text-center py-4">
+        <h1 style="color:#e7c158">Administración de Productos</h1>
+        <a href="index.html" class="btn btn-warning mt-2"><i class="bi bi-arrow-left-circle"></i> Volver al Panel</a>
+    </header>
+
+    <main class="container mt-4">
+
+        <!-- acciones -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalAgregar">
+                    <i class="bi bi-plus"></i> Añadir Producto
+                </button>
+            </div>
+        </div>
+
+        <!-- tabla -->
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-bordered align-middle text-center">
+                <thead style="background-color: #2b2b2b; color: #e7c158;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Imagen (URL)</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>ID Categoría</th>
+                        <th>Nombre Categoría</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaProductos">
+                    <!-- filas cargadas dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <!-- ========== MODAL AGREGAR ========== -->
+    <div class="modal fade" id="modalAgregar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color:#3D4A4B; color:white;">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color:#e7c158">Añadir Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <form id="formAgregar">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label>Nombre</label>
+                                <input id="add-nombre" name="nombre" type="text" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Precio</label>
+                                <input id="add-precio" name="precio" type="number" step="0.01" class="form-control"
+                                    required>
+                            </div>
+
+                            <div class="col-12">
+                                <label>Descripción</label>
+                                <textarea id="add-descripcion" name="descripcion" class="form-control"
+                                    rows="2"></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Imagen URL</label>
+                                <input id="add-imagen" name="imagenUrl" type="text" class="form-control"
+                                    placeholder="producto/producto1.jpg o https://...">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Stock Actual</label>
+                                <input id="add-stock" name="stockActual" type="number" class="form-control" value="0">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>ID Categoría</label>
+                                <input id="add-idcategoria" name="idCategoria" type="number" class="form-control">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Nombre Categoría</label>
+                                <input id="add-nombrecategoria" name="nombreCategoria" type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-success" type="submit"><i class="bi bi-save"></i> Guardar</button>
+                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL EDITAR ========== -->
+    <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color:#3D4A4B; color:white;">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="color:#e7c158">Editar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <form id="formEditar">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label>ID (no editable)</label>
+                                <input id="edit-id" name="id" type="text" class="form-control" readonly>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label>Nombre</label>
+                                <input id="edit-nombre" name="nombre" type="text" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label>Precio</label>
+                                <input id="edit-precio" name="precio" type="number" step="0.01" class="form-control"
+                                    required>
+                            </div>
+
+                            <div class="col-12">
+                                <label>Descripción</label>
+                                <textarea id="edit-descripcion" name="descripcion" class="form-control"
+                                    rows="2"></textarea>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Imagen URL</label>
+                                <input id="edit-imagen" name="imagenUrl" type="text" class="form-control">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Stock Actual</label>
+                                <input id="edit-stock" name="stockActual" type="number" class="form-control">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>ID Categoría</label>
+                                <input id="edit-idcategoria" name="idCategoria" type="number" class="form-control">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Nombre Categoría</label>
+                                <input id="edit-nombrecategoria" name="nombreCategoria" type="text"
+                                    class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-warning" type="submit"><i class="bi bi-pencil-square"></i>
+                            Actualizar</button>
+                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- bootstrap js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        (() => {
+            // Cambia esto si tu API está en otro host
+            const API_URL = "http://localhost:8080/api/productos";
+
+            // Helpers para leer campos de respuesta (compatibilidad con distintos nombres)
+            function getId(p) { return p.idProducto ?? p.id ?? p.id_prod ?? null; }
+            function getImagen(p) { return p.imagenUrl ?? p.imagen ?? p.image ?? ""; }
+            function getStock(p) { return p.stockActual ?? p.stock ?? 0; }
+            function getCategoriaId(p) { return (p.categoria && (p.categoria.idCategoria ?? p.categoria.id)) ?? p.idCategoria ?? ""; }
+            function getCategoriaNombre(p) { return (p.categoria && (p.categoria.nombreCategoria ?? p.categoria.nombre)) ?? p.nombreCategoria ?? ""; }
+
+            // Elementos DOM
+            const tabla = document.getElementById("tablaProductos");
+            const btnRefrescar = document.getElementById("btnRefrescar");
+
+            // Modales/forms
+            const formAgregar = document.getElementById("formAgregar");
+            const formEditar = document.getElementById("formEditar");
+            const modalEditar = new bootstrap.Modal(document.getElementById("modalEditar"));
+            const modalAgregar = new bootstrap.Modal(document.getElementById("modalAgregar"));
+
+            // Cargar y renderizar productos
+            async function cargarProductos() {
+                try {
+                    const res = await fetch(API_URL);
+                    if (!res.ok) throw new Error("Respuesta no OK: " + res.status);
+                    const data = await res.json();
+
+                    tabla.innerHTML = "";
+                    data.forEach(p => {
+                        const id = getId(p);
+                        const imagen = getImagen(p);
+                        const stock = getStock(p);
+                        const idCat = getCategoriaId(p);
+                        const nombreCat = getCategoriaNombre(p);
+
+                        // formateo precio seguro
+                        const precio = typeof p.precio === "number" ? p.precio : parseFloat(p.precio || 0);
+
+                        // filas
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                    <td>${id ?? ''}</td>
+                    <td>${escapeHtml(p.nombre ?? "")}</td>
+                    <td style="max-width:260px; white-space:pre-wrap; word-break:break-word;">${escapeHtml(p.descripcion ?? "")}</td>
+                    <td style="max-width:160px; word-break:break-all;">${escapeHtml(imagen)}</td>
+                    <td>$${Number(precio).toLocaleString('es-CO')}</td>
+                    <td>${stock}</td>
+                    <td>${idCat}</td>
+                    <td>${escapeHtml(nombreCat)}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-1 btn-editar"><i class="bi bi-pencil"></i> Editar</button>
+                        <button class="btn btn-danger btn-sm btn-eliminar"><i class="bi bi-trash"></i> Eliminar</button>
+                    </td>
+                `;
+
+                        // editar -> abrir modal con datos
+                        tr.querySelector(".btn-editar").addEventListener("click", () => {
+                            // llenar inputs del modal editar
+                            document.getElementById("edit-id").value = id ?? "";
+                            document.getElementById("edit-nombre").value = p.nombre ?? "";
+                            document.getElementById("edit-descripcion").value = p.descripcion ?? "";
+                            document.getElementById("edit-imagen").value = imagen ?? "";
+                            document.getElementById("edit-precio").value = precio ?? 0;
+                            document.getElementById("edit-stock").value = stock ?? 0;
+                            document.getElementById("edit-idcategoria").value = idCat ?? "";
+                            document.getElementById("edit-nombrecategoria").value = nombreCat ?? "";
+                            modalEditar.show();
+                        });
+
+                        // eliminar -> confirmar y borrar
+                        tr.querySelector(".btn-eliminar").addEventListener("click", async () => {
+                            if (!id) { alert("ID no disponible, no se puede eliminar."); return; }
+                            if (!confirm(`¿Eliminar producto ${p.nombre || id}?`)) return;
+                            try {
+                                const resp = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                                if (!resp.ok) throw new Error("Error al eliminar: " + resp.status);
+                                await cargarProductos();
+                                alert("Producto eliminado.");
+                            } catch (err) {
+                                console.error(err);
+                                alert("No se pudo eliminar: " + err.message);
+                            }
+                        });
+
+                        tabla.appendChild(tr);
+                    });
+                } catch (err) {
+                    console.error("Error cargando productos:", err);
+                    tabla.innerHTML = `<tr><td colspan="9">Error cargando productos: ${escapeHtml(err.message)}</td></tr>`;
+                }
+            }
+
+            // Enviar nuevo producto (POST)
+            formAgregar.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const body = {
+                    nombre: document.getElementById("add-nombre").value.trim(),
+                    descripcion: document.getElementById("add-descripcion").value.trim(),
+                    imagenUrl: document.getElementById("add-imagen").value.trim(),
+                    precio: parseFloat(document.getElementById("add-precio").value) || 0,
+                    stockActual: parseInt(document.getElementById("add-stock").value) || 0,
+                    categoria: {
+                        idCategoria: document.getElementById("add-idcategoria").value ? parseInt(document.getElementById("add-idcategoria").value) : null,
+                        nombreCategoria: document.getElementById("add-nombrecategoria").value.trim()
+                    }
+                };
+                try {
+                    const res = await fetch(API_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(body)
+                    });
+                    if (!res.ok) throw new Error("Error guardando: " + res.status);
+                    formAgregar.reset();
+                    modalAgregar.hide();
+                    await cargarProductos();
+                    alert("Producto agregado.");
+                } catch (err) {
+                    console.error(err);
+                    alert("No se pudo agregar: " + err.message);
+                }
+            });
+
+            // Actualizar producto (PUT)
+            formEditar.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const id = document.getElementById("edit-id").value;
+                if (!id) { alert("ID inválido"); return; }
+                const body = {
+                    nombre: document.getElementById("edit-nombre").value.trim(),
+                    descripcion: document.getElementById("edit-descripcion").value.trim(),
+                    imagenUrl: document.getElementById("edit-imagen").value.trim(),
+                    precio: parseFloat(document.getElementById("edit-precio").value) || 0,
+                    stockActual: parseInt(document.getElementById("edit-stock").value) || 0,
+                    categoria: {
+                        idCategoria: document.getElementById("edit-idcategoria").value ? parseInt(document.getElementById("edit-idcategoria").value) : null,
+                        nombreCategoria: document.getElementById("edit-nombrecategoria").value.trim()
+                    }
+                };
+                try {
+                    const res = await fetch(`${API_URL}/${id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(body)
+                    });
+                    if (!res.ok) throw new Error("Error actualizando: " + res.status);
+                    modalEditar.hide();
+                    await cargarProductos();
+                    alert("Producto actualizado.");
+                } catch (err) {
+                    console.error(err);
+                    alert("No se pudo actualizar: " + err.message);
+                }
+            });
+
+            // refrescar
+            btnRefrescar.addEventListener("click", () => cargarProductos());
+
+            // escape para evitar inyección en HTML renderizado
+            function escapeHtml(text) {
+                if (text == null) return "";
+                return String(text)
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("'", "&#039;");
+            }
+
+            // cargar al inicio
+            document.addEventListener("DOMContentLoaded", cargarProductos);
+        })();
+    </script>
+
+</body>
+
+</html>
