@@ -5,10 +5,12 @@ import com.olvealmacen.tienda.dao.CompraDAO;
 import com.olvealmacen.tienda.modelo.Compra;
 import java.util.List;
 
+@Service
 public class CompraService {
 
     private final CompraDAO compraDAO;
 
+    @Autowired
     public CompraService(CompraDAO compraDAO) {
         this.compraDAO = compraDAO;
     }

@@ -6,10 +6,12 @@ import com.olvealmacen.tienda.modelo.Producto;
 
 import java.util.List;
 
+@Service
 public class ProductoService {
 
     private final ProductoDAO productoDAO;
 
+    @Autowired
     public ProductoService(ProductoDAO productoDAO) {
         this.productoDAO = productoDAO;
     }

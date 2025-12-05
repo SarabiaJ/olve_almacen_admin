@@ -6,10 +6,12 @@ import com.olvealmacen.tienda.modelo.Proveedor;
 
 import java.util.List;
 
+@Service
 public class ProveedorService {
 
     private final ProveedorDAO proveedorDAO;
 
+    @Autowired
     public ProveedorService(ProveedorDAO proveedorDAO) {
         this.proveedorDAO = proveedorDAO;
     }
