@@ -116,7 +116,7 @@
     ============================== -->
     <script>
 
-        const API_URL = "/api/categorias"; // ⚠️ Aquí luego ponemos tu backend real
+        const API_URL = "https://olve-almacen-admin-backend.onrender.com/api/categoria"; // endpoint remoto
 
         // =======================
         // 1. Cargar categorías
@@ -218,7 +218,7 @@
         cargarCategorias();
 
         function cargarCategorias() {
-            fetch("http://localhost:8080/TuProyecto/CategoriaControlador?accion=listar")
+            fetch("https://olve-almacen-admin-backend.onrender.com/api/categoria")
                 .then(res => res.json())
                 .then(data => {
                     const tabla = document.getElementById("tablaCategorias");
