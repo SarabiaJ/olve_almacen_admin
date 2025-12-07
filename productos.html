@@ -209,7 +209,7 @@
             // Cargar y renderizar productos
             async function cargarProductos() {
                 try {
-                    const res = await fetch(https://olve-almacen-admin-backend.onrender.com/api/productos);
+                    const res = await fetch('https://olve-almacen-admin-backend.onrender.com/api/productos');
                     if (!res.ok) throw new Error("Respuesta no OK: " + res.status);
                     const data = await res.json();
 
