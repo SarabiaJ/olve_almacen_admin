@@ -215,11 +215,11 @@
 
                     tabla.innerHTML = "";
                     data.forEach(p => {
-                        const id = getId(p);
-                        const imagen = getImagen(p);
-                        const stock = getStock(p);
-                        const idCat = getCategoriaId(p);
-                        const nombreCat = getCategoriaNombre(p);
+                        const id = p.id;
+                        const imagen = p.imagen || "";
+                        const stock = p.stock || 0;
+                        const idCat = p.idCategoria || "";
+                        const nombreCat = p.nombreCategoria || "";
 
                         // formateo precio seguro
                         const precio = typeof p.precio === "number" ? p.precio : parseFloat(p.precio || 0);
