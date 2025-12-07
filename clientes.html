@@ -39,7 +39,6 @@
                         <th>Nombre</th>
                         <th>Teléfono</th>
                         <th>Correo</th>
-                        <th>Dirección</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -52,7 +51,6 @@
                         <td>María Fernanda</td>
                         <td>3114567890</td>
                         <td>maria@gmail.com</td>
-                        <td>Calle 10 #20-30</td>
                         <td>
                             <button class="btn btn-warning btn-sm" onclick="abrirModalEditarCliente()">Editar</button>
                             <button class="btn btn-danger btn-sm">Eliminar</button>
@@ -99,10 +97,7 @@
                             <input id="add-correo" type="email" class="form-control">
                         </div>
 
-                        <div class="col-md-12">
-                            <label>Dirección:</label>
-                            <input id="add-direccion" type="text" class="form-control">
-                        </div>
+                        <!-- campo Dirección eliminado (no está en la tabla MySQL) -->
 
                     </div>
 
@@ -151,10 +146,7 @@
                             <input id="edit-correo" type="email" class="form-control">
                         </div>
 
-                        <div class="col-md-12">
-                            <label>Dirección:</label>
-                            <input id="edit-direccion" type="text" class="form-control">
-                        </div>
+                        <!-- campo Dirección eliminado (no está en la tabla MySQL) -->
 
                     </div>
 
@@ -192,9 +184,8 @@
                             <td>${escapeHtml(c.nombre ?? '')}</td>
                             <td>${escapeHtml(c.telefono ?? '')}</td>
                             <td>${escapeHtml(c.correo ?? '')}</td>
-                            <td>${escapeHtml(c.direccion ?? '')}</td>
                             <td>
-                                <button class="btn btn-warning btn-sm" onclick="abrirEditar(${c.id ?? c.idCliente}, '${(c.nombre||'').replaceAll("'","\\'")}', '${(c.telefono||'').replaceAll("'","\\'")}', '${(c.correo||'').replaceAll("'","\\'")}', '${(c.direccion||'').replaceAll("'","\\'")}')">Editar</button>
+                                <button class="btn btn-warning btn-sm" onclick="abrirEditar(${c.id ?? c.idCliente}, '${(c.nombre||'').replaceAll("'","\\'")}', '${(c.telefono||'').replaceAll("'","\\'")}', '${(c.correo||'').replaceAll("'","\\'" )}')">Editar</button>
                                 <button class="btn btn-danger btn-sm" onclick="eliminarCliente(${c.id ?? c.idCliente})">Eliminar</button>
                             </td>
                         </tr>
@@ -203,7 +194,7 @@
             } catch (err) {
                 console.error('Error cargando clientes:', err);
                 const tabla = document.getElementById('tablaClientes');
-                tabla.innerHTML = `<tr><td colspan="6">Error cargando clientes: ${escapeHtml(err.message)}</td></tr>`;
+                tabla.innerHTML = `<tr><td colspan="5">Error cargando clientes: ${escapeHtml(err.message)}</td></tr>`;
             }
         }
 
@@ -212,12 +203,11 @@
             modal.show();
         }
 
-        function abrirEditar(id, nombre, telefono, correo, direccion) {
+        function abrirEditar(id, nombre, telefono, correo) {
             document.getElementById('edit-id').value = id ?? '';
             document.getElementById('edit-nombre').value = nombre ?? '';
             document.getElementById('edit-telefono').value = telefono ?? '';
             document.getElementById('edit-correo').value = correo ?? '';
-            document.getElementById('edit-direccion').value = direccion ?? '';
 
             new bootstrap.Modal(document.getElementById('modalEditar')).show();
         }
@@ -227,8 +217,7 @@
                 id: document.getElementById('add-id').value || undefined,
                 nombre: document.getElementById('add-nombre').value,
                 telefono: document.getElementById('add-telefono').value,
-                correo: document.getElementById('add-correo').value,
-                direccion: document.getElementById('add-direccion').value
+                correo: document.getElementById('add-correo').value
             };
 
             await fetch(API_CLIENTES, {
@@ -247,8 +236,7 @@
             const cliente = {
                 nombre: document.getElementById('edit-nombre').value,
                 telefono: document.getElementById('edit-telefono').value,
-                correo: document.getElementById('edit-correo').value,
-                direccion: document.getElementById('edit-direccion').value
+                correo: document.getElementById('edit-correo').value
             };
 
             await fetch(API_CLIENTES + '/' + id, {

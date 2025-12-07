@@ -38,10 +38,8 @@
                     <tr>
                         <th>ID</th>
                         <th>ID Proveedor</th>
-                        <th>Nombre Proveedor</th>
                         <th>Fecha</th>
                         <th>Total</th>
-                        <th>Método de Pago</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -72,11 +70,6 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label>Nombre Proveedor:</label>
-                            <input type="text" id="add-nombreproveedor" class="form-control">
-                        </div>
-
-                        <div class="col-md-6">
                             <label>Fecha:</label>
                             <input type="date" id="add-fecha" class="form-control">
                         </div>
@@ -84,11 +77,6 @@
                         <div class="col-md-6">
                             <label>Total:</label>
                             <input type="number" id="add-total" class="form-control">
-                        </div>
-
-                        <div class="col-md-12">
-                            <label>Método de Pago:</label>
-                            <input type="text" id="add-metodopago" class="form-control">
                         </div>
 
                     </div>
@@ -126,11 +114,6 @@
                             <input type="number" id="edit-idproveedor" class="form-control">
                         </div>
 
-                        <div class="col-md-4">
-                            <label>Nombre Proveedor:</label>
-                            <input type="text" id="edit-nombreproveedor" class="form-control">
-                        </div>
-
                         <div class="col-md-6">
                             <label>Fecha:</label>
                             <input type="date" id="edit-fecha" class="form-control">
@@ -139,11 +122,6 @@
                         <div class="col-md-6">
                             <label>Total:</label>
                             <input type="number" id="edit-total" class="form-control">
-                        </div>
-
-                        <div class="col-md-12">
-                            <label>Método de Pago:</label>
-                            <input type="text" id="edit-metodopago" class="form-control">
                         </div>
 
                     </div>
@@ -178,15 +156,12 @@
                     <tr>
                         <td>${c.id}</td>
                         <td>${c.idProveedor}</td>
-                        <td>${c.nombreProveedor}</td>
                         <td>${c.fecha}</td>
                         <td>$${c.total}</td>
-                        <td>${c.metodoPago}</td>
 
                         <td>
                             <button class="btn btn-warning btn-sm"
-                                onclick="abrirModalEditar(${c.id}, ${c.idProveedor}, '${c.nombreProveedor}',
-                                '${c.fecha}', ${c.total}, '${c.metodoPago}')">
+                                onclick="abrirModalEditar(${c.id}, ${c.idProveedor}, '${c.fecha}', ${c.total})">
                                 Editar
                             </button>
 
@@ -203,25 +178,22 @@
         cargarCompras();
 
         // ================= ABRIR MODAL EDITAR ==================
-        function abrirModalEditar(id, idProv, nomProv, fecha, total, metodo) {
+        function abrirModalEditar(id, idProv, fecha, total) {
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-idproveedor").value = idProv;
-            document.getElementById("edit-nombreproveedor").value = nomProv;
             document.getElementById("edit-fecha").value = fecha;
             document.getElementById("edit-total").value = total;
-            document.getElementById("edit-metodopago").value = metodo;
 
             new bootstrap.Modal(document.getElementById("modalEditar")).show();
         }
 
         // ================= GUARDAR COMPRA ==================
         async function guardarCompra() {
+
             const compra = {
                 idProveedor: document.getElementById("add-idproveedor").value,
-                nombreProveedor: document.getElementById("add-nombreproveedor").value,
                 fecha: document.getElementById("add-fecha").value,
-                total: document.getElementById("add-total").value,
-                metodoPago: document.getElementById("add-metodopago").value
+                total: document.getElementById("add-total").value
             };
 
             await fetch(API_URL, {
@@ -239,13 +211,11 @@
             const compra = {
                 id: document.getElementById("edit-id").value,
                 idProveedor: document.getElementById("edit-idproveedor").value,
-                nombreProveedor: document.getElementById("edit-nombreproveedor").value,
                 fecha: document.getElementById("edit-fecha").value,
-                total: document.getElementById("edit-total").value,
-                metodoPago: document.getElementById("edit-metodopago").value
+                total: document.getElementById("edit-total").value
             };
 
-            await fetch(API_URL, {
+            await fetch(API_URL + '/' + compra.id, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(compra)

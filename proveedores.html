@@ -40,8 +40,7 @@
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Teléfono</th>
-                        <th>Correo</th>
-                        <th>Ciudad</th>
+                        <th>Dirección</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -77,13 +76,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Correo:</label>
-                        <input id="add-correo" type="email" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Ciudad:</label>
-                        <input id="add-ciudad" type="text" class="form-control">
+                        <label>Dirección:</label>
+                        <input id="add-direccion" type="text" class="form-control">
                     </div>
 
                 </div>
@@ -122,13 +116,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Correo:</label>
-                        <input id="edit-correo" type="email" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Ciudad:</label>
-                        <input id="edit-ciudad" type="text" class="form-control">
+                        <label>Dirección:</label>
+                        <input id="edit-direccion" type="text" class="form-control">
                     </div>
 
                 </div>
@@ -165,12 +154,11 @@
                         <td>${p.id}</td>
                         <td>${p.nombre}</td>
                         <td>${p.telefono}</td>
-                        <td>${p.correo}</td>
-                        <td>${p.ciudad}</td>
+                        <td>${p.direccion ?? p.direccion}</td>
 
                         <td>
                             <button class="btn btn-warning btn-sm"
-                                onclick="abrirEditar(${p.id}, '${p.nombre}', '${p.telefono}', '${p.correo}', '${p.ciudad}')">
+                                onclick="abrirEditar(${p.id}, '${p.nombre}', '${p.telefono}', '${(p.direccion||'').replaceAll("'","\\'")}')">
                                 Editar
                             </button>
 
@@ -186,12 +174,11 @@
         // ====================================================
         // Abrir Modal Editar
         // ====================================================
-        function abrirEditar(id, nombre, telefono, correo, ciudad) {
+        function abrirEditar(id, nombre, telefono, direccion) {
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-nombre").value = nombre;
             document.getElementById("edit-telefono").value = telefono;
-            document.getElementById("edit-correo").value = correo;
-            document.getElementById("edit-ciudad").value = ciudad;
+            document.getElementById("edit-direccion").value = direccion;
 
             new bootstrap.Modal(document.getElementById("modalEditar")).show();
         }
@@ -203,8 +190,7 @@
             const proveedor = {
                 nombre: document.getElementById("add-nombre").value,
                 telefono: document.getElementById("add-telefono").value,
-                correo: document.getElementById("add-correo").value,
-                ciudad: document.getElementById("add-ciudad").value
+                direccion: document.getElementById("add-direccion").value
             };
 
             await fetch(API, {
@@ -224,8 +210,7 @@
                 id: document.getElementById("edit-id").value,
                 nombre: document.getElementById("edit-nombre").value,
                 telefono: document.getElementById("edit-telefono").value,
-                correo: document.getElementById("edit-correo").value,
-                ciudad: document.getElementById("edit-ciudad").value
+                direccion: document.getElementById("edit-direccion").value
             };
 
             await fetch(API + "/" + proveedor.id, {

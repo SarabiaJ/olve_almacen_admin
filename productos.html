@@ -284,13 +284,11 @@
                 const body = {
                     nombre: document.getElementById("add-nombre").value.trim(),
                     descripcion: document.getElementById("add-descripcion").value.trim(),
-                    imagenUrl: document.getElementById("add-imagen").value.trim(),
+                    imagen: document.getElementById("add-imagen").value.trim(),
                     precio: parseFloat(document.getElementById("add-precio").value) || 0,
-                    stockActual: parseInt(document.getElementById("add-stock").value) || 0,
-                    categoria: {
-                        idCategoria: document.getElementById("add-idcategoria").value ? parseInt(document.getElementById("add-idcategoria").value) : null,
-                        nombreCategoria: document.getElementById("add-nombrecategoria").value.trim()
-                    }
+                    stock: parseInt(document.getElementById("add-stock").value) || 0,
+                    idCategoria: document.getElementById("add-idcategoria").value ? parseInt(document.getElementById("add-idcategoria").value) : null,
+                    nombreCategoria: document.getElementById("add-nombrecategoria").value.trim()
                 };
                 try {
                     const res = await fetch(API_URL, {
@@ -317,13 +315,11 @@
                 const body = {
                     nombre: document.getElementById("edit-nombre").value.trim(),
                     descripcion: document.getElementById("edit-descripcion").value.trim(),
-                    imagenUrl: document.getElementById("edit-imagen").value.trim(),
+                    imagen: document.getElementById("edit-imagen").value.trim(),
                     precio: parseFloat(document.getElementById("edit-precio").value) || 0,
-                    stockActual: parseInt(document.getElementById("edit-stock").value) || 0,
-                    categoria: {
-                        idCategoria: document.getElementById("edit-idcategoria").value ? parseInt(document.getElementById("edit-idcategoria").value) : null,
-                        nombreCategoria: document.getElementById("edit-nombrecategoria").value.trim()
-                    }
+                    stock: parseInt(document.getElementById("edit-stock").value) || 0,
+                    idCategoria: document.getElementById("edit-idcategoria").value ? parseInt(document.getElementById("edit-idcategoria").value) : null,
+                    nombreCategoria: document.getElementById("edit-nombrecategoria").value.trim()
                 };
                 try {
                     const res = await fetch(`${API_URL}/${id}`, {
@@ -341,8 +337,8 @@
                 }
             });
 
-            // refrescar
-            btnRefrescar.addEventListener("click", () => cargarProductos());
+            // refrescar (si existe el botón)
+            if (btnRefrescar) btnRefrescar.addEventListener("click", () => cargarProductos());
 
             // escape para evitar inyección en HTML renderizado
             function escapeHtml(text) {
