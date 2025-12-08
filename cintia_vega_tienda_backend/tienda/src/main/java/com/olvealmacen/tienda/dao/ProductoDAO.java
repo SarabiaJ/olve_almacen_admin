@@ -30,10 +30,8 @@ public class ProductoDAO {
 
     // Obtener todos los productos
     public List<Producto> obtenerTodos() {
-        String sql = "SELECT p.id_producto, p.nombre, p.descripcion, p.imagen_url, p.precio, p.stock_actual, " +
-                     "c.id_categoria AS id_categoria " +
-                     "FROM producto p " +
-                     "INNER JOIN categoria c ON p.id_categoria = c.id_categoria";
+        String sql = "SELECT p.id_producto, p.nombre, p.descripcion, p.imagen_url, p.precio, p.stock_actual, p.id_categoria " +
+                     "FROM producto p";
         return jdbcTemplate.query(sql, rowMapper);
     }
 

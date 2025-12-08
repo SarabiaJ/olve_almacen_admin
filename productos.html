@@ -42,7 +42,6 @@
                         <th>Precio</th>
                         <th>Stock</th>
                         <th>ID Categoría</th>
-                        <th>Nombre Categoría</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -97,11 +96,6 @@
                             <div class="col-md-6">
                                 <label>ID Categoría</label>
                                 <input id="add-idcategoria" name="idCategoria" type="number" class="form-control">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label>Nombre Categoría</label>
-                                <input id="add-nombrecategoria" name="nombreCategoria" type="text" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -163,12 +157,6 @@
                                 <label>ID Categoría</label>
                                 <input id="edit-idcategoria" name="idCategoria" type="number" class="form-control">
                             </div>
-
-                            <div class="col-md-6">
-                                <label>Nombre Categoría</label>
-                                <input id="edit-nombrecategoria" name="nombreCategoria" type="text"
-                                    class="form-control">
-                            </div>
                         </div>
                     </div>
 
@@ -219,7 +207,6 @@
                         const imagen = p.imagen || "";
                         const stock = p.stock || 0;
                         const idCat = p.idCategoria || "";
-                        const nombreCat = p.nombreCategoria || "";
 
                         // formateo precio seguro
                         const precio = typeof p.precio === "number" ? p.precio : parseFloat(p.precio || 0);
@@ -234,7 +221,6 @@
                     <td>$${Number(precio).toLocaleString('es-CO')}</td>
                     <td>${stock}</td>
                     <td>${idCat}</td>
-                    <td>${escapeHtml(nombreCat)}</td>
                     <td>
                         <button class="btn btn-warning btn-sm me-1 btn-editar"><i class="bi bi-pencil"></i> Editar</button>
                         <button class="btn btn-danger btn-sm btn-eliminar"><i class="bi bi-trash"></i> Eliminar</button>
@@ -251,7 +237,6 @@
                             document.getElementById("edit-precio").value = precio ?? 0;
                             document.getElementById("edit-stock").value = stock ?? 0;
                             document.getElementById("edit-idcategoria").value = idCat ?? "";
-                            document.getElementById("edit-nombrecategoria").value = nombreCat ?? "";
                             modalEditar.show();
                         });
 

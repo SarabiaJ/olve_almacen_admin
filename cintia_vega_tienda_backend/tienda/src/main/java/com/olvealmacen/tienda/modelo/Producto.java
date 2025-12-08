@@ -46,3 +46,4 @@ public class Producto {
     public void setIdCategoria(int idCategoria) { this.idCategoria = idCategoria; }
 
 }
+
