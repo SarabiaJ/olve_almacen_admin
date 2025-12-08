@@ -272,8 +272,7 @@
                     imagen: document.getElementById("add-imagen").value.trim(),
                     precio: parseFloat(document.getElementById("add-precio").value) || 0,
                     stock: parseInt(document.getElementById("add-stock").value) || 0,
-                    idCategoria: document.getElementById("add-idcategoria").value ? parseInt(document.getElementById("add-idcategoria").value) : null,
-                    nombreCategoria: document.getElementById("add-nombrecategoria").value.trim()
+                    idCategoria: document.getElementById("add-idcategoria").value ? parseInt(document.getElementById("add-idcategoria").value) : null
                 };
                 try {
                     const res = await fetch(API_URL, {
@@ -288,7 +287,7 @@
                     alert("Producto agregado.");
                 } catch (err) {
                     console.error(err);
-                    alert("No se pudo agregar: " + err.message);
+                    alert("No se pudo agregar: " + err.message + '\nRevisa la consola y CORS.');
                 }
             });
 
@@ -303,8 +302,7 @@
                     imagen: document.getElementById("edit-imagen").value.trim(),
                     precio: parseFloat(document.getElementById("edit-precio").value) || 0,
                     stock: parseInt(document.getElementById("edit-stock").value) || 0,
-                    idCategoria: document.getElementById("edit-idcategoria").value ? parseInt(document.getElementById("edit-idcategoria").value) : null,
-                    nombreCategoria: document.getElementById("edit-nombrecategoria").value.trim()
+                    idCategoria: document.getElementById("edit-idcategoria").value ? parseInt(document.getElementById("edit-idcategoria").value) : null
                 };
                 try {
                     const res = await fetch(`${API_URL}/${id}`, {
@@ -318,7 +316,7 @@
                     alert("Producto actualizado.");
                 } catch (err) {
                     console.error(err);
-                    alert("No se pudo actualizar: " + err.message);
+                    alert("No se pudo actualizar: " + err.message + '\nRevisa la consola y CORS.');
                 }
             });
 

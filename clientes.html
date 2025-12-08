@@ -78,22 +78,22 @@
                     <div class="row g-3">
 
                         <div class="col-md-4">
-                            <label>ID Cliente:</label>
+                            <label for="add-id">ID Cliente:</label>
                             <input id="add-id" type="text" class="form-control">
                         </div>
 
                         <div class="col-md-8">
-                            <label>Nombre Completo:</label>
+                            <label for="add-nombre">Nombre Completo:</label>
                             <input id="add-nombre" type="text" class="form-control">
                         </div>
 
                         <div class="col-md-6">
-                            <label>Teléfono:</label>
+                            <label for="add-telefono">Teléfono:</label>
                             <input id="add-telefono" type="text" class="form-control">
                         </div>
 
                         <div class="col-md-6">
-                            <label>Correo Electrónico:</label>
+                            <label for="add-correo">Correo Electrónico:</label>
                             <input id="add-correo" type="email" class="form-control">
                         </div>
 
@@ -127,22 +127,22 @@
                     <div class="row g-3">
 
                         <div class="col-md-4">
-                            <label>ID Cliente (No editable):</label>
+                            <label for="edit-id">ID Cliente (No editable):</label>
                             <input id="edit-id" type="text" class="form-control" readonly>
                         </div>
 
                         <div class="col-md-8">
-                            <label>Nombre Completo:</label>
+                            <label for="edit-nombre">Nombre Completo:</label>
                             <input id="edit-nombre" type="text" class="form-control">
                         </div>
 
                         <div class="col-md-6">
-                            <label>Teléfono:</label>
+                            <label for="edit-telefono">Teléfono:</label>
                             <input id="edit-telefono" type="text" class="form-control">
                         </div>
 
                         <div class="col-md-6">
-                            <label>Correo Electrónico:</label>
+                            <label for="edit-correo">Correo Electrónico:</label>
                             <input id="edit-correo" type="email" class="form-control">
                         </div>
 
@@ -167,6 +167,16 @@
     <!-- FUNCIONES JS (CRUD Clientes) -->
     <script>
         const API_CLIENTES = "https://olve-almacen-admin-backend.onrender.com/api/clientes";
+
+        // Helper: escapar texto para atributos onclick
+        function escapeForOnclick(text) {
+            if (text == null) return '';
+            return String(text)
+                .replaceAll('\\', '\\\\')
+                .replaceAll("'", "\\'")
+                .replaceAll('\n', '\\n')
+                .replaceAll('\r', '');
+        }
 
         async function cargarClientes() {
             try {
@@ -220,15 +230,20 @@
                 correo: document.getElementById('add-correo').value
             };
 
-            await fetch(API_CLIENTES, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(cliente)
-            });
-
-            cargarClientes();
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregar'));
-            if (modal) modal.hide();
+            try {
+                const res = await fetch(API_CLIENTES, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cliente)
+                });
+                if (!res.ok) throw new Error('Error en respuesta: ' + res.status);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregar'));
+                if (modal) modal.hide();
+                await cargarClientes();
+            } catch (err) {
+                console.error('Error guardando cliente:', err);
+                alert('No se pudo guardar el cliente: ' + err.message + '\nRevisa la consola y CORS.');
+            }
         }
 
         async function actualizarCliente() {
@@ -239,21 +254,32 @@
                 correo: document.getElementById('edit-correo').value
             };
 
-            await fetch(API_CLIENTES + '/' + id, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(cliente)
-            });
-
-            cargarClientes();
-            const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
-            if (modal) modal.hide();
+            try {
+                const res = await fetch(API_CLIENTES + '/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cliente)
+                });
+                if (!res.ok) throw new Error('Error en respuesta: ' + res.status);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+                if (modal) modal.hide();
+                await cargarClientes();
+            } catch (err) {
+                console.error('Error actualizando cliente:', err);
+                alert('No se pudo actualizar el cliente: ' + err.message + '\nRevisa la consola y CORS.');
+            }
         }
 
         async function eliminarCliente(id) {
             if (!confirm('¿Seguro que deseas eliminar este cliente?')) return;
-            await fetch(API_CLIENTES + '/' + id, { method: 'DELETE' });
-            cargarClientes();
+            try {
+                const res = await fetch(API_CLIENTES + '/' + id, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Error en respuesta: ' + res.status);
+                await cargarClientes();
+            } catch (err) {
+                console.error('Error eliminando cliente:', err);
+                alert('No se pudo eliminar el cliente: ' + err.message + '\nRevisa la consola y CORS.');
+            }
         }
 
         function escapeHtml(text) {
