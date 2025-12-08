@@ -62,10 +62,10 @@
 
                 <div class="modal-body">
 
-                    <label>ID Categoría:</label>
+                    <label for="add-id">ID Categoría:</label>
                     <input id="add-id" type="number" class="form-control mb-3">
 
-                    <label>Nombre Categoría:</label>
+                    <label for="add-nombre">Nombre Categoría:</label>
                     <input id="add-nombre" type="text" class="form-control">
 
                 </div>
@@ -91,10 +91,10 @@
 
                 <div class="modal-body">
 
-                    <label>ID Categoría (No editable):</label>
+                    <label for="edit-id">ID Categoría (No editable):</label>
                     <input id="edit-id" type="number" class="form-control mb-3" readonly>
 
-                    <label>Nombre Categoría:</label>
+                    <label for="edit-nombre">Nombre Categoría:</label>
                     <input id="edit-nombre" type="text" class="form-control">
 
                 </div>
@@ -118,37 +118,50 @@
 
         const API_URL = "https://olve-almacen-admin-backend.onrender.com/api/categoria"; // endpoint remoto
 
+        // Helper: escapar texto para atributos onclick
+        function escapeForOnclick(text) {
+            if (text == null) return '';
+            return String(text)
+                .replaceAll('\\', '\\\\')
+                .replaceAll("'", "\\'")
+                .replaceAll('\n', '\\n')
+                .replaceAll('\r', '');
+        }
+
         // =======================
         // 1. Cargar categorías
         // =======================
         async function cargarCategorias() {
-            const res = await fetch(API_URL);
-            const categorias = await res.json();
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error('Error al cargar: ' + res.status);
+                const categorias = await res.json();
 
-            let html = "";
+                let html = "";
 
-            categorias.forEach(cat => {
-                html += `
-                    <tr>
-                        <td>${cat.id}</td>
-                        <td>${cat.nombre}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="abrirEditar(${cat.id}, '${cat.nombre}')">
-                                Editar
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="eliminarCategoria(${cat.id})">
-                                Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
+                categorias.forEach(cat => {
+                    const id = cat.idCategoria ?? cat.id ?? cat.id_categoria ?? '';
+                    const nombre = cat.nombreCategoria ?? cat.nombre ?? cat.nombre_categoria ?? '';
+                    html += `
+                        <tr>
+                            <td>${id}</td>
+                            <td>${nombre}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="abrirEditar(${id}, '${escapeForOnclick(nombre)}')">Editar</button>
+                                <button class="btn btn-danger btn-sm" onclick="eliminarCategoria(${id})">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
+                });
 
-            document.getElementById("tablaCategorias").innerHTML = html;
+                document.getElementById("tablaCategorias").innerHTML = html;
+            } catch (err) {
+                console.error('Error cargando categorías:', err);
+                document.getElementById("tablaCategorias").innerHTML = `<tr><td colspan="3">Error cargando categorías: ${err.message}</td></tr>`;
+            }
         }
 
         cargarCategorias();
-
 
 
         // =======================
@@ -162,23 +175,29 @@
         }
 
 
-
         // =======================
         // 3. Guardar categoría
         // =======================
         async function guardarCategoria() {
             const data = {
-                id: document.getElementById("add-id").value,
-                nombre: document.getElementById("add-nombre").value
+                idCategoria: document.getElementById("add-id").value ? parseInt(document.getElementById("add-id").value) : null,
+                nombreCategoria: document.getElementById("add-nombre").value
             };
 
-            await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-
-            location.reload();
+            try {
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+                if (!res.ok) throw new Error('Error en respuesta: ' + res.status);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregar'));
+                if (modal) modal.hide();
+                await cargarCategorias();
+            } catch (err) {
+                console.error('Error guardando categoría:', err);
+                alert('No se pudo guardar la categoría: ' + err.message + '\nRevisa la consola y CORS.');
+            }
         }
 
 
@@ -189,16 +208,24 @@
             const id = document.getElementById("edit-id").value;
 
             const data = {
-                nombre: document.getElementById("edit-nombre").value
+                idCategoria: id ? parseInt(id) : null,
+                nombreCategoria: document.getElementById("edit-nombre").value
             };
 
-            await fetch(`${API_URL}/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-
-            location.reload();
+            try {
+                const res = await fetch(API_URL, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+                if (!res.ok) throw new Error('Error en respuesta: ' + res.status);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+                if (modal) modal.hide();
+                await cargarCategorias();
+            } catch (err) {
+                console.error('Error actualizando categoría:', err);
+                alert('No se pudo actualizar la categoría: ' + err.message + '\nRevisa la consola y CORS.');
+            }
         }
 
 
@@ -208,37 +235,16 @@
         async function eliminarCategoria(id) {
             if (!confirm("¿Seguro que deseas eliminar esta categoría?")) return;
 
-            await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-
-            location.reload();
+            try {
+                const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error('Error en respuesta: ' + res.status);
+                await cargarCategorias();
+            } catch (err) {
+                console.error('Error eliminando categoría:', err);
+                alert('No se pudo eliminar la categoría: ' + err.message + '\nRevisa la consola y CORS.');
+            }
         }
     </script>
 
-    <script>
-        cargarCategorias();
-
-        function cargarCategorias() {
-            fetch("https://olve-almacen-admin-backend.onrender.com/api/categoria")
-                .then(res => res.json())
-                .then(data => {
-                    const tabla = document.getElementById("tablaCategorias");
-                    tabla.innerHTML = "";
-
-                    data.forEach(cat => {
-                        tabla.innerHTML += `
-                            <tr>
-                                <td>${cat.idCategoria}</td>
-                                <td>${cat.nombreCategoria}</td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm">Editar</button>
-                                    <button class="btn btn-danger btn-sm">Eliminar</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                })
-                .catch(err => console.log("Error cargando categorías:", err));
-        }
-    </script>
 </body>
 </html>

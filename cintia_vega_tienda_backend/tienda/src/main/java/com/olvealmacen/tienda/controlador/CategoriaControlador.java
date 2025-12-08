@@ -26,4 +26,22 @@ public class CategoriaControlador {
         List<Categoria> lista = categoriaService.obtenerCategorias();
         return gson.toJson(lista);
     }
+
+    @PostMapping
+    public String insertar(@RequestBody Categoria c) {
+        boolean ok = categoriaService.agregarCategoria(c);
+        return "{\"success\": " + ok + "}";
+    }
+
+    @PutMapping
+    public String actualizar(@RequestBody Categoria c) {
+        boolean ok = categoriaService.actualizarCategoria(c);
+        return "{\"success\": " + ok + "}";
+    }
+
+    @DeleteMapping("/{id}")
+    public String eliminar(@PathVariable int id) {
+        boolean ok = categoriaService.eliminarCategoria(id);
+        return "{\"success\": " + ok + "}";
+    }
 }

@@ -7,7 +7,7 @@
     <title>Administración de Ventas</title>
 
     <!-- ESTILO GLOBAL -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 
     <!-- BOOTSTRAP -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
@@ -196,6 +196,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // Diagnóstico rápido: confirmar carga de script y existencia de Bootstrap
+    console.log('ventas.html: script cargado');
+    console.log('ventas.html: bootstrap presente ->', typeof bootstrap !== 'undefined');
+    window.addEventListener('error', (ev) => console.error('Error global en ventas.html:', ev.error || ev.message));
+
     const API_URL = "https://olve-almacen-admin-backend.onrender.com/api/ventas";
 
     // -------- LISTAR --------
