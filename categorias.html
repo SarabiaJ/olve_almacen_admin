@@ -213,7 +213,7 @@
             };
 
             try {
-                const res = await fetch(API_URL, {
+                const res = await fetch("https://olve-almacen-admin-backend.onrender.com/api/categoria/123", {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
