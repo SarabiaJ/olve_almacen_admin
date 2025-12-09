@@ -205,11 +205,17 @@
         // 4. Actualizar categoría
         // =======================
         async function actualizarCategoria() {
-            const id = document.getElementById("edit-id").value;
+            const id = document.getElementById('edit-id').value;
+            const nombre = document.getElementById('edit-nombre').value;
+
+            if (!nombre.trim()) {
+                alert('El nombre de la categoría no puede estar vacío');
+                return;
+            }
 
             const data = {
-                idCategoria: id ? parseInt(id) : null,
-                nombreCategoria: document.getElementById("edit-nombre").value
+                idCategoria: id,
+                nombreCategoria: nombre
             };
 
             try {
