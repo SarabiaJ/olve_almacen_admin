@@ -213,7 +213,7 @@
             };
 
             try {
-                const res = await fetch("https://olve-almacen-admin-backend.onrender.com/api/categoria/123", {
+                const res = await fetch(`https://olve-almacen-admin-backend.onrender.com/api/categoria/${id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
@@ -222,9 +222,10 @@
                 const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
                 if (modal) modal.hide();
                 await cargarCategorias();
+                alert('Categoría actualizada correctamente');
             } catch (err) {
                 console.error('Error actualizando categoría:', err);
-                alert('No se pudo actualizar la categoría: ' + err.message + '\nRevisa la consola y CORS.');
+                alert('No se pudo actualizar la categoría: ' + err.message);
             }
         }
 
