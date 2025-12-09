@@ -148,16 +148,17 @@
             try {
                 const res = await fetch(API_URL);
                 if (!res.ok) throw new Error('Error ' + res.status);
-                const data = await res.json();
 
+                const data = await res.json();
                 const tabla = document.getElementById("tablaCompras");
                 tabla.innerHTML = "";
 
                 data.forEach(c => {
-                    const id = c.id ?? c.idCompra ?? '';
+                    const id = c.id ?? '';
                     const idProv = c.idProveedor ?? '';
                     const fecha = c.fecha ?? '';
                     const total = c.total ?? 0;
+
                     tabla.innerHTML += `
                         <tr>
                             <td>${id}</td>
@@ -166,21 +167,26 @@
                             <td>$${total}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm"
-                                    onclick="abrirModalEditar(${id}, ${idProv}, '${fecha}', ${total})">Editar</button>
+                                    onclick="abrirModalEditar(${id}, ${idProv}, '${fecha}', ${total})">
+                                    Editar
+                                </button>
                                 <button class="btn btn-danger btn-sm"
-                                    onclick="eliminarCompra(${id})">Eliminar</button>
+                                    onclick="eliminarCompra(${id})">
+                                    Eliminar
+                                </button>
                             </td>
                         </tr>
                     `;
                 });
+
             } catch (err) {
                 console.error('Error cargando compras:', err);
-                const tabla = document.getElementById("tablaCompras");
-                tabla.innerHTML = `<tr><td colspan="5">Error cargando compras: ${err.message}</td></tr>`;
+                document.getElementById("tablaCompras").innerHTML =
+                    `<tr><td colspan="5">Error cargando compras</td></tr>`;
             }
         }
 
-        cargarCompras();
+        document.addEventListener("DOMContentLoaded", cargarCompras);
 
         // ================= ABRIR MODAL EDITAR ==================
         function abrirModalEditar(id, idProv, fecha, total) {
@@ -189,16 +195,34 @@
             document.getElementById("edit-fecha").value = fecha;
             document.getElementById("edit-total").value = total;
 
-            new bootstrap.Modal(document.getElementById("modalEditar")).show();
+            new bootstrap.Modal(
+                document.getElementById("modalEditar")
+            ).show();
         }
 
         // ================= GUARDAR COMPRA ==================
         async function guardarCompra() {
-            const compra = {
-                idProveedor: document.getElementById("add-idproveedor").value,
-                fecha: document.getElementById("add-fecha").value,
-                total: document.getElementById("add-total").value
-            };
+            const idProveedor = parseInt(document.getElementById("add-idproveedor").value);
+            const fecha = document.getElementById("add-fecha").value;
+            const total = parseFloat(document.getElementById("add-total").value);
+
+            // ✅ VALIDACIONES
+            if (isNaN(idProveedor) || idProveedor <= 0) {
+                alert("ID de proveedor inválido");
+                return;
+            }
+
+            if (!fecha) {
+                alert("La fecha es obligatoria");
+                return;
+            }
+
+            if (isNaN(total) || total <= 0) {
+                alert("Total inválido");
+                return;
+            }
+
+            const compra = { idProveedor, fecha, total };
 
             try {
                 const res = await fetch(API_URL, {
@@ -206,52 +230,72 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(compra)
                 });
-                if (!res.ok) throw new Error('Error en respuesta: ' + res.status);
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregar'));
-                if (modal) modal.hide();
+
+                if (!res.ok) throw new Error(res.status);
+
+                bootstrap.Modal
+                    .getInstance(document.getElementById('modalAgregar'))
+                    ?.hide();
+
                 await cargarCompras();
+
             } catch (err) {
                 console.error('Error guardando compra:', err);
-                alert('No se pudo guardar la compra: ' + err.message + '\nRevisa la consola y CORS.');
+                alert("No se pudo guardar la compra");
             }
         }
 
-        // ================= ACTUALIZAR ==================
+        // ================= ACTUALIZAR COMPRA ==================
         async function actualizarCompra() {
-            const compra = {
-                id: document.getElementById("edit-id").value,
-                idProveedor: document.getElementById("edit-idproveedor").value,
-                fecha: document.getElementById("edit-fecha").value,
-                total: document.getElementById("edit-total").value
-            };
+            const id = parseInt(document.getElementById("edit-id").value);
+            const idProveedor = parseInt(document.getElementById("edit-idproveedor").value);
+            const fecha = document.getElementById("edit-fecha").value;
+            const total = parseFloat(document.getElementById("edit-total").value);
+
+            if (isNaN(id) || isNaN(idProveedor) || !fecha || isNaN(total)) {
+                alert("Datos inválidos");
+                return;
+            }
+
+            const compra = { idProveedor, fecha, total };
 
             try {
-                const res = await fetch(API_URL + '/' + compra.id, {
+                const res = await fetch(`${API_URL}/${id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(compra)
                 });
-                if (!res.ok) throw new Error('Error en respuesta: ' + res.status);
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
-                if (modal) modal.hide();
+
+                if (!res.ok) throw new Error(res.status);
+
+                bootstrap.Modal
+                    .getInstance(document.getElementById('modalEditar'))
+                    ?.hide();
+
                 await cargarCompras();
+
             } catch (err) {
                 console.error('Error actualizando compra:', err);
-                alert('No se pudo actualizar la compra: ' + err.message + '\nRevisa la consola y CORS.');
+                alert("No se pudo actualizar la compra");
             }
         }
 
-        // ================= ELIMINAR ==================
+        // ================= ELIMINAR COMPRA ==================
         async function eliminarCompra(id) {
-            if (!confirm('¿Seguro que deseas eliminar esta compra?')) return;
+            if (!confirm("¿Seguro que deseas eliminar esta compra?")) return;
 
             try {
-                const res = await fetch(API_URL + "/" + id, { method: "DELETE" });
-                if (!res.ok) throw new Error('Error en respuesta: ' + res.status);
+                const res = await fetch(`${API_URL}/${id}`, {
+                    method: "DELETE"
+                });
+
+                if (!res.ok) throw new Error(res.status);
+
                 await cargarCompras();
+
             } catch (err) {
                 console.error('Error eliminando compra:', err);
-                alert('No se pudo eliminar la compra: ' + err.message + '\nRevisa la consola y CORS.');
+                alert("No se pudo eliminar la compra");
             }
         }
     </script>
