@@ -28,7 +28,7 @@
             </button>
         </div>
 
-        <!-- TABLA SIMPLE SEGÚN TU BD -->
+        <!-- TABLA -->
         <div class="table-responsive">
             <table class="table table-dark table-striped table-bordered align-middle text-center">
                 <thead style="background-color:#2b2b2b; color:#e7c158;">
@@ -174,18 +174,24 @@
 
                 data.forEach(v => {
                     tabla.innerHTML += `
-                <tr>
-                    <td>${v.id_venta}</td>
-                    <td>${v.fecha}</td>
-                    <td>$${v.total}</td>
-                    <td>${v.metodo_pago}</td>
-                    <td>${v.id_cliente}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="abrirModalEditar(${v.id_venta}, '${v.fecha}', ${v.total}, '${v.metodo_pago}', ${v.id_cliente})">Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="eliminarVenta(${v.id_venta})">Eliminar</button>
-                    </td>
-                </tr>
-            `;
+                        <tr>
+                            <td>${v.idVenta}</td>
+                            <td>${v.fecha}</td>
+                            <td>$${v.total}</td>
+                            <td>${v.metodoPago}</td>
+                            <td>${v.idCliente}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm"
+                                    onclick="abrirModalEditar(${v.idVenta}, '${v.fecha}', ${v.total}, '${v.metodoPago}', ${v.idCliente})">
+                                    Editar
+                                </button>
+                                <button class="btn btn-danger btn-sm"
+                                    onclick="eliminarVenta(${v.idVenta})">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    `;
                 });
 
             } catch (err) {
@@ -218,12 +224,12 @@
         /* ============================
              ABRIR EDITAR
         ============================ */
-        function abrirModalEditar(id, fecha, total, metodo_pago, idCliente) {
+        function abrirModalEditar(id, fecha, total, metodoPago, idCliente) {
 
             document.getElementById("edit-id").value = id;
             document.getElementById("edit-fecha").value = fecha;
             document.getElementById("edit-total").value = total;
-            document.getElementById("edit-metodopago").value = metodo_pago;
+            document.getElementById("edit-metodopago").value = metodoPago;
             document.getElementById("edit-idcliente").value = idCliente;
 
             new bootstrap.Modal(document.getElementById("modalEditar")).show();
@@ -235,11 +241,11 @@
         async function actualizarVenta() {
 
             const venta = {
-                id_venta: document.getElementById("edit-id").value,
+                idVenta: parseInt(document.getElementById("edit-id").value),
                 fecha: document.getElementById("edit-fecha").value,
-                total: document.getElementById("edit-total").value,
-                metodo_pago: document.getElementById("edit-metodopago").value,
-                id_cliente: document.getElementById("edit-idcliente").value
+                total: parseFloat(document.getElementById("edit-total").value),
+                metodoPago: document.getElementById("edit-metodopago").value,
+                idCliente: parseInt(document.getElementById("edit-idcliente").value)
             };
 
             await fetch(API_URL, {
